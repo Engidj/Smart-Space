@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -10,20 +11,40 @@ function Register() {
     password: "",
   });
 
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
     setError("");
+    setMessage("");
+
+    const email = form.email.trim().toLowerCase();
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (
+      form.password.length < 8 ||
+      !/[a-z]/.test(form.password) ||
+      !/[A-Z]/.test(form.password) ||
+      !/\d/.test(form.password)
+    ) {
+      setError(
+        "Password needs at least 8 characters, uppercase, lowercase and a number."
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -31,10 +52,12 @@ function Register() {
         "http://localhost:5000/api/auth/register",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(form),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...form,
+            name: form.name.trim(),
+            email,
+          }),
         }
       );
 
@@ -44,100 +67,222 @@ function Register() {
         throw new Error(data.message || "Registration failed");
       }
 
-      navigate("/login");
-    } catch (error) {
-      setError(error.message);
+      setForm((current) => ({ ...current, email }));
+      setOtpSent(true);
+      setMessage(data.message || "OTP sent. Check your email.");
+    } catch (err) {
+      setError(err.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+
+    if (!/^\d{6}$/.test(otp)) {
+      setError("Enter the 6-digit OTP.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/verify-email",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: form.email.trim().toLowerCase(),
+            otp,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Verification failed");
+      }
+
+      navigate("/login", {
+        replace: true,
+        state: { message: "Email verified! You can now log in." },
+      });
+    } catch (err) {
+      setError(err.message || "Verification failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">
-            Create Account
+    <div className="flex min-h-screen items-center justify-center bg-slate-100 px-5 py-8">
+      <div className="w-full max-w-md rounded-xl border border-slate-200  bg-white p-7 shadow-sm sm:p-9">
+        <div className="mb-8 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-xl font-bold text-white">
+            S
+          </div>
+
+          <h1 className="mt-4 text-3xl font-bold text-slate-900">
+            {otpSent ? "Verify Your Email" : "Create Account"}
           </h1>
 
-          <p className="text-slate-500 mt-2">
-            Join Smart Space Platform
+          <p className="mt-2 text-sm text-slate-500">
+            {otpSent
+              ? `Enter the 6-digit code sent to ${form.email}`
+              : "Join Smart Space Platform"}
           </p>
         </div>
 
-        <form onSubmit={handleRegister} className="space-y-5">
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Name
-            </label>
+        {!otpSent ? (
+          <form onSubmit={handleRegister} className="space-y-5">
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-slate-700">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                maxLength={100}
+                autoComplete="name"
+                placeholder="Enter your name"
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                required
+              />
+            </div>
 
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="Enter your name"
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-slate-700">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                autoComplete="email"
+                placeholder="Enter your email"
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                required
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Email
-            </label>
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-slate-700">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                minLength={8}
+                autoComplete="new-password"
+                placeholder="At least 8 characters"
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                required
+              />
+              <p className="mt-2 text-xs text-slate-500">
+                Include uppercase, lowercase and a number.
+              </p>
+            </div>
 
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+            {error && (
+              <p
+                role="alert"
+                className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+              >
+                {error}
+              </p>
+            )}
 
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Password
-            </label>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? "Sending OTP..." : "Create Account"}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerify} className="space-y-5">
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-slate-700">
+                Email OTP
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                value={otp}
+                onChange={(e) =>
+                  setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                }
+                placeholder="Enter 6-digit OTP"
+                maxLength={6}
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 text-center tracking-[0.4em] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                required
+              />
+            </div>
 
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Minimum 6 characters"
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+            {message && (
+              <p
+                role="status"
+                className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700"
+              >
+                {message}
+              </p>
+            )}
 
-          {error && (
-            <p className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">
-              {error}
-            </p>
-          )}
+            {error && (
+              <p
+                role="alert"
+                className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+              >
+                {error}
+              </p>
+            )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-60"
-          >
-            {loading ? "Creating account..." : "Register"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading || otp.length !== 6}
+              className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? "Verifying..." : "Verify Email"}
+            </button>
 
-        <p className="text-center text-slate-600 mt-6">
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-blue-600 font-semibold hover:underline"
-          >
-            Login
-          </Link>
-        </p>
+            <button
+              type="button"
+              onClick={() => {
+                setOtpSent(false);
+                setOtp("");
+                setError("");
+                setMessage("");
+              }}
+              className="w-full py-2 text-sm font-medium text-slate-600 hover:text-slate-900"
+            >
+              Back to registration
+            </button>
+          </form>
+        )}
+
+        {!otpSent && (
+          <p className="mt-6 text-center text-sm text-slate-600">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-semibold text-blue-600 hover:underline"
+            >
+              Login
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -14,15 +15,14 @@ function SpaceDetails() {
 
   if (!space || !booking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center">
+      <div className="flex min-h-screen items-center justify-center bg-slate-100">
+        <div className="rounded-xl border bg-white p-8 text-center shadow-sm">
           <h1 className="text-2xl font-bold text-slate-900">
             Space not found
           </h1>
-
           <button
             onClick={() => navigate("/search")}
-            className="mt-5 bg-blue-600 text-white px-5 py-3 rounded-lg"
+            className="mt-5 rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700"
           >
             Back to Search
           </button>
@@ -71,123 +71,128 @@ function SpaceDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <nav className="h-18 bg-white border-b border-slate-200 flex items-center justify-between px-8 md:px-16">
+    <div className="min-h-screen w-full bg-slate-100 text-slate-900">
+      {/* Navbar */}
+      <nav className="flex w-full items-center justify-between bg-slate-900 px-5 py-3 text-white md:px-8">
         <button
           onClick={() => navigate("/home")}
-          className="text-2xl font-bold text-slate-900"
+          className="text-xl font-bold"
         >
           Smart Space
         </button>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 md:gap-6">
           <button
             onClick={() => navigate("/home")}
-            className="text-slate-700 hover:text-blue-600"
+            className="hidden text-sm text-slate-200 hover:text-white sm:block"
           >
             Home
           </button>
-
           <button
             onClick={() => navigate("/search")}
-            className="text-slate-700 hover:text-blue-600"
+            className="text-sm font-semibold text-blue-300"
           >
             Find Space
           </button>
-
           <button
             onClick={() => navigate("/bookings")}
-            className="text-slate-700 hover:text-blue-600"
+            className="hidden text-sm text-slate-200 hover:text-white sm:block"
           >
             My Bookings
           </button>
         </div>
       </nav>
 
-      <main className="max-w-5xl mx-auto px-6 py-12">
+      <main className="w-full px-5 py-7 md:px-10">
         <button
           onClick={() => navigate("/search")}
-          className="text-blue-600 font-semibold mb-6"
+          className="mb-5 font-semibold text-blue-600 hover:text-blue-800"
         >
           ← Back to Search
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-            <span className="inline-block bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full mb-5">
+        <div className="mb-7">
+          <h1 className="text-3xl font-bold text-slate-900">
+            Space Details
+          </h1>
+          <p className="mt-2 text-slate-600">
+            Review the space and confirm your booking.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {/* Space information */}
+          <section className="rounded-xl border border-slate-200 border-t-4 border-t-blue-600 bg-white p-6 shadow-sm md:p-8">
+            <span className="inline-block rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
               Available
             </span>
 
-            <h1 className="text-3xl font-bold text-slate-900">
+            <h2 className="mt-4 text-2xl font-bold text-slate-900">
               {space.name}
-            </h1>
+            </h2>
 
-            <div className="mt-7 space-y-4 text-slate-600">
-              <p>
-                <span className="font-semibold text-slate-900">
-                  Type:
-                </span>{" "}
-                {space.type}
-              </p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-lg bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Space Type</p>
+                <p className="mt-1 font-semibold">{space.type}</p>
+              </div>
 
-              <p>
-                <span className="font-semibold text-slate-900">
-                  Capacity:
-                </span>{" "}
-                {space.capacity} people
-              </p>
+              <div className="rounded-lg bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Capacity</p>
+                <p className="mt-1 font-semibold">
+                  {space.capacity} people
+                </p>
+              </div>
 
-              <p>
-                <span className="font-semibold text-slate-900">
-                  Location:
-                </span>{" "}
-                {space.location}
-              </p>
+              <div className="rounded-lg bg-slate-50 p-4 sm:col-span-2">
+                <p className="text-sm text-slate-500">Location</p>
+                <p className="mt-1 font-semibold">{space.location}</p>
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+          {/* Booking form */}
+          <section className="rounded-xl border border-slate-200 border-t-4 border-t-purple-500 bg-white p-6 shadow-sm md:p-8">
             <h2 className="text-2xl font-bold text-slate-900">
               Booking Details
             </h2>
 
             <div className="mt-6 space-y-4">
-              <div className="bg-slate-50 rounded-lg p-4">
-                <p className="text-sm text-slate-500">Date</p>
-                <p className="font-semibold text-slate-900">
+              <div className="rounded-lg bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Booking Date</p>
+                <p className="mt-1 font-semibold text-slate-900">
                   {booking.date}
                 </p>
               </div>
 
-              <div className="bg-slate-50 rounded-lg p-4">
-                <p className="text-sm text-slate-500">Time</p>
-                <p className="font-semibold text-slate-900">
+              <div className="rounded-lg bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Time Slot</p>
+                <p className="mt-1 font-semibold text-slate-900">
                   {booking.start_time} - {booking.end_time}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
-                  Purpose
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Purpose of Booking
                 </label>
-
                 <input
                   type="text"
                   value={purpose}
                   onChange={(e) => setPurpose(e.target.value)}
                   placeholder="e.g. Group Discussion"
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 />
               </div>
 
               {error && (
-                <div className="bg-red-50 text-red-600 p-3 rounded-lg">
+                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
                   {error}
                 </div>
               )}
 
               {message && (
-                <div className="bg-green-50 text-green-600 p-3 rounded-lg">
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
                   {message}
                 </div>
               )}
@@ -195,12 +200,12 @@ function SpaceDetails() {
               <button
                 onClick={handleBooking}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold disabled:opacity-60"
+                className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
               >
                 {loading ? "Booking..." : "Confirm Booking"}
               </button>
             </div>
-          </div>
+          </section>
         </div>
       </main>
     </div>

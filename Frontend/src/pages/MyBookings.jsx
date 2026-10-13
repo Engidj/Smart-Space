@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -37,12 +38,10 @@ function MyBookings() {
 
   const cancelBooking = async (bookingId) => {
     const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this booking?",
+      "Are you sure you want to cancel this booking?"
     );
 
-    if (!confirmCancel) {
-      return;
-    }
+    if (!confirmCancel) return;
 
     try {
       const response = await fetch(
@@ -50,7 +49,7 @@ function MyBookings() {
         {
           method: "DELETE",
           credentials: "include",
-        },
+        }
       );
 
       const data = await response.json();
@@ -66,90 +65,95 @@ function MyBookings() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <nav className="h-18 bg-white border-b border-slate-200 flex items-center justify-between px-8 md:px-16">
+    <div className="min-h-screen w-full bg-slate-100 text-slate-900">
+      {/* Navbar */}
+      <nav className="flex w-full items-center justify-between bg-slate-900 px-5 py-3 text-white md:px-8">
         <button
           onClick={() => navigate("/home")}
-          className="text-2xl font-bold text-slate-900"
+          className="text-xl font-bold"
         >
           Smart Space
         </button>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 md:gap-6">
           <button
             onClick={() => navigate("/home")}
-            className="text-slate-700 hover:text-blue-600"
+            className="hidden text-sm text-slate-200 hover:text-white sm:block"
           >
             Home
           </button>
 
           <button
             onClick={() => navigate("/search")}
-            className="text-slate-700 hover:text-blue-600"
+            className="text-sm text-slate-200 hover:text-white"
           >
             Find Space
           </button>
 
-          <button className="text-blue-600 font-semibold">My Bookings</button>
+          <span className="text-sm font-semibold text-blue-300">
+            My Bookings
+          </span>
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900">My Bookings</h1>
-
-          <p className="text-slate-500 mt-2">
+      <main className="w-full px-5 py-7 md:px-10">
+        <div className="mb-7">
+          <h1 className="text-3xl font-bold text-slate-900">
+            My Bookings
+          </h1>
+          <p className="mt-2 text-slate-600">
             View and manage your space bookings.
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             {error}
           </div>
         )}
 
         {loading ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-10 text-center">
+          <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
             <p className="text-slate-500">Loading bookings...</p>
           </div>
         ) : bookings.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
+          <div className="rounded-xl border border-slate-200 border-t-4 border-t-blue-600 bg-white p-10 text-center">
             <h2 className="text-xl font-bold text-slate-900">
               No bookings yet
             </h2>
 
-            <p className="text-slate-500 mt-2">
+            <p className="mt-2 text-slate-500">
               Find an available space and make your first booking.
             </p>
 
             <button
               onClick={() => navigate("/search")}
-              className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold"
+              className="mt-6 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
             >
               Find a Space
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             {bookings.map((booking) => (
               <div
                 key={booking.booking_id}
-                className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm"
+                className="rounded-xl border border-slate-200 border-t-4 border-t-blue-600 bg-white p-6 shadow-sm"
               >
-                <div className="flex justify-between items-start mb-5">
+                <div className="mb-5 flex items-start justify-between gap-3">
                   <div>
                     <h2 className="text-xl font-bold text-slate-900">
                       {booking.space_name}
                     </h2>
-
-                    <p className="text-slate-500 mt-1">{booking.type}</p>
+                    <p className="mt-1 text-sm text-slate-500">
+                      {booking.type}
+                    </p>
                   </div>
 
                   <span
-                    className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
                       booking.status === "confirmed"
-                        ? "bg-green-100 text-green-700"
+                        ? "bg-emerald-100 text-emerald-700"
                         : "bg-red-100 text-red-700"
                     }`}
                   >
@@ -157,14 +161,18 @@ function MyBookings() {
                   </span>
                 </div>
 
-                <div className="space-y-3 text-slate-600">
+                <div className="space-y-3 text-sm text-slate-600">
                   <p>
-                    <span className="font-semibold text-slate-900">Date:</span>{" "}
+                    <span className="font-semibold text-slate-900">
+                      Date:
+                    </span>{" "}
                     {booking.date}
                   </p>
 
                   <p>
-                    <span className="font-semibold text-slate-900">Time:</span>{" "}
+                    <span className="font-semibold text-slate-900">
+                      Time:
+                    </span>{" "}
                     {booking.start_time} - {booking.end_time}
                   </p>
 
@@ -186,7 +194,7 @@ function MyBookings() {
                 {booking.status === "confirmed" && (
                   <button
                     onClick={() => cancelBooking(booking.booking_id)}
-                    className="w-full mt-6 border border-red-300 text-red-600 hover:bg-red-50 py-3 rounded-lg font-semibold"
+                    className="mt-6 w-full rounded-lg border border-red-300 py-3 font-semibold text-red-600 hover:bg-red-50"
                   >
                     Cancel Booking
                   </button>

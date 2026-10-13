@@ -28,9 +28,7 @@ function AssignFacility() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            data.message || "Failed to load spaces"
-          );
+          throw new Error(data.message || "Failed to load spaces");
         }
 
         setSpaces(data.spaces || []);
@@ -72,28 +70,26 @@ function AssignFacility() {
           method: "POST",
           credentials: "include",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            facilityId: facility.facility_id
-          })
+            facilityId: facility.facility_id,
+          }),
         }
       );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Failed to assign facility"
-        );
+        throw new Error(data.message || "Failed to assign facility");
       }
 
       setSuccess("Facility assigned successfully");
 
       navigate("/manager/facilities", {
         state: {
-          message: "Facility assigned successfully"
-        }
+          message: "Facility assigned successfully",
+        },
       });
     } catch (err) {
       setError(err.message || "Failed to assign facility");
@@ -104,19 +100,23 @@ function AssignFacility() {
 
   if (!facility) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center bg-white p-8 rounded-xl shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900">
+      <div className="flex min-h-screen items-center justify-center bg-slate-100 px-5">
+        <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-xl font-bold text-blue-600">
+            F
+          </div>
+
+          <h2 className="mt-4 text-xl font-bold text-slate-900">
             Facility not found
           </h2>
 
-          <p className="text-slate-500 mt-2">
+          <p className="mt-2 text-slate-500">
             Open this page from Facility Management.
           </p>
 
           <button
             onClick={() => navigate("/manager/facilities")}
-            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
+            className="mt-5 rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
           >
             Back to Facilities
           </button>
@@ -126,108 +126,113 @@ function AssignFacility() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <nav className="bg-white border-b border-slate-200 px-8 md:px-16 py-5 flex items-center justify-between">
+    <div className="min-h-screen w-full bg-slate-100 text-slate-900">
+      <nav className="flex min-h-[72px] items-center justify-between border-b border-slate-700 bg-slate-900 px-5 py-4 sm:px-8 lg:px-12">
         <button
           onClick={() => navigate("/manager")}
-          className="text-2xl font-bold text-slate-900"
+          className="text-xl font-bold text-white sm:text-2xl"
         >
           Smart Space
         </button>
 
         <button
           onClick={() => navigate("/manager/facilities")}
-          className="text-slate-700 hover:text-blue-600"
+          className="text-sm font-medium text-slate-300 transition hover:text-white sm:text-base"
         >
           Facilities
         </button>
       </nav>
 
-      <main className="max-w-2xl mx-auto px-6 py-12">
-        <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm">
-          <h1 className="text-3xl font-bold text-slate-900">
-            Assign Facility
-          </h1>
-
-          <p className="text-slate-500 mt-2 mb-8">
-            Assign this facility to a space in your organization.
-          </p>
-
-          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
-            <p className="text-sm text-slate-500">
-              Facility
-            </p>
-
-            <p className="text-lg font-bold text-slate-900 mt-1">
-              {facility.name}
+      <main className="w-full px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
+        <div className="mx-auto max-w-2xl">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Assign Facility
+            </h1>
+            <p className="mt-2 text-slate-500">
+              Assign a facility to a space in your organization.
             </p>
           </div>
 
-          {error && (
-            <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6">
-              {error}
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="mb-6 rounded-lg border border-blue-100 bg-blue-50 p-4">
+              <p className="text-sm font-medium text-slate-500">Selected Facility</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">
+                {facility.name}
+              </p>
+              <p className="mt-1 text-sm text-slate-500">
+                Facility ID: {facility.facility_id}
+              </p>
             </div>
-          )}
 
-          {success && (
-            <div className="bg-green-50 text-green-700 p-4 rounded-lg mb-6">
-              {success}
-            </div>
-          )}
-
-          {loading ? (
-            <p className="text-slate-500">
-              Loading spaces...
-            </p>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Select Space
-              </label>
-
-              <select
-                value={selectedSpace}
-                onChange={(e) => setSelectedSpace(e.target.value)}
-                required
-                className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:border-blue-500"
+            {error && (
+              <div
+                role="alert"
+                className="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
               >
-                <option value="">Select a space</option>
-
-                {spaces.map((space) => (
-                  <option
-                    key={space.space_id}
-                    value={space.space_id}
-                  >
-                    {space.name} - {space.location}
-                  </option>
-                ))}
-              </select>
-
-              {!error && spaces.length === 0 && (
-                <p className="text-sm text-slate-500 mt-2">
-                  No spaces found in your organization.
-                </p>
-              )}
-
-              <div className="flex gap-4 mt-6">
-                <button
-                  type="button"
-                  onClick={() => navigate("/manager/facilities")}
-                  className="flex-1 border border-slate-300 text-slate-700 hover:bg-slate-50 py-3 rounded-lg font-semibold"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={saving || loading || spaces.length === 0}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold disabled:opacity-50"
-                >
-                  {saving ? "Assigning..." : "Assign Facility"}
-                </button>
+                {error}
               </div>
-            </form>
-          )}
+            )}
+
+            {success && (
+              <div
+                role="status"
+                className="mb-5 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700"
+              >
+                {success}
+              </div>
+            )}
+
+            {loading ? (
+              <p className="py-5 text-center text-slate-500">
+                Loading spaces...
+              </p>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Select Space
+                </label>
+
+                <select
+                  value={selectedSpace}
+                  onChange={(e) => setSelectedSpace(e.target.value)}
+                  required
+                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                >
+                  <option value="">Select a space</option>
+                  {spaces.map((space) => (
+                    <option key={space.space_id} value={space.space_id}>
+                      {space.name} - {space.location}
+                    </option>
+                  ))}
+                </select>
+
+                {spaces.length === 0 && !error && (
+                  <p className="mt-2 text-sm text-slate-500">
+                    No spaces found in your organization.
+                  </p>
+                )}
+
+                <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={() => navigate("/manager/facilities")}
+                    className="flex-1 rounded-lg border border-slate-300 py-3 font-semibold text-slate-700 transition hover:bg-slate-50"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={saving || loading || spaces.length === 0}
+                    className="flex-1 rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {saving ? "Assigning..." : "Assign Facility"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </main>
     </div>

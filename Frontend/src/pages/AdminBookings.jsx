@@ -48,7 +48,7 @@ function AdminBookings() {
 
         const matchesStatus =
             statusFilter === "all" ||
-            String(booking.status).toLowerCase() === statusFilter;
+            String(booking.status || "").toLowerCase() === statusFilter;
 
         return matchesSearch && matchesStatus;
     });
@@ -65,74 +65,76 @@ function AdminBookings() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50">
-            <nav className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-5 md:px-12">
-                <h1 className="text-2xl font-bold text-slate-900">
+        <div className="min-h-screen bg-slate-100">
+            <nav className="flex flex-wrap items-center justify-between gap-4 bg-slate-900 px-6 py-4 text-white shadow-lg md:px-12">
+                <h1 className="text-2xl font-bold">
                     Smart Space
                 </h1>
 
                 <button
                     onClick={() => navigate("/admin")}
-                    className="rounded-lg bg-slate-800 px-5 py-3 font-semibold text-white hover:bg-slate-700"
+                    className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
                 >
                     Back to Dashboard
                 </button>
             </nav>
 
             <main className="mx-auto max-w-7xl px-6 py-10">
-                <h2 className="text-3xl font-bold text-slate-900">
-                    Booking Management
-                </h2>
+                <div className="mb-8">
+                    <h2 className="text-3xl font-bold text-slate-800">
+                        Booking Management
+                    </h2>
 
-                <p className="mt-2 text-slate-500">
-                    View and filter bookings across the platform.
-                </p>
+                    <p className="mt-2 text-slate-600">
+                        View and filter bookings across the platform.
+                    </p>
+                </div>
 
                 <div className="my-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-                    <div className="rounded-xl border border-slate-200 bg-white p-5">
+                    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                         <p className="text-slate-500">Total Bookings</p>
-                        <h3 className="mt-2 text-3xl font-bold">
+                        <h3 className="mt-2 text-3xl font-bold text-slate-800">
                             {bookings.length}
                         </h3>
                     </div>
 
-                    <div className="rounded-xl border border-slate-200 bg-white p-5">
+                    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                         <p className="text-slate-500">Confirmed</p>
                         <h3 className="mt-2 text-3xl font-bold text-green-600">
                             {bookings.filter(
-                                (b) => String(b.status).toLowerCase() === "confirmed"
+                                (b) => String(b.status || "").toLowerCase() === "confirmed"
                             ).length}
                         </h3>
                     </div>
 
-                    <div className="rounded-xl border border-slate-200 bg-white p-5">
+                    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                         <p className="text-slate-500">Cancelled</p>
                         <h3 className="mt-2 text-3xl font-bold text-red-600">
                             {bookings.filter(
-                                (b) => String(b.status).toLowerCase() === "cancelled"
+                                (b) => String(b.status || "").toLowerCase() === "cancelled"
                             ).length}
                         </h3>
                     </div>
                 </div>
 
                 {error && (
-                    <div className="mb-5 rounded-lg bg-red-50 p-4 text-red-700">
+                    <div className="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
                         {error}
                     </div>
                 )}
 
-                <div className="mb-6 flex flex-col gap-4 md:flex-row">
+                <div className="mb-6 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm md:flex-row">
                     <input
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search user, email, space, or purpose"
-                        className="flex-1 rounded-lg border border-slate-300 bg-white p-3"
+                        className="flex-1 rounded-lg border border-slate-300 bg-white p-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     />
 
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="rounded-lg border border-slate-300 bg-white p-3"
+                        className="rounded-lg border border-slate-300 bg-white p-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     >
                         <option value="all">All statuses</option>
                         <option value="confirmed">Confirmed</option>
@@ -140,18 +142,18 @@ function AdminBookings() {
                     </select>
                 </div>
 
-                <p className="mb-4 text-sm text-slate-500">
+                <p className="mb-4 text-sm text-slate-600">
                     Showing {filteredBookings.length} of {bookings.length} bookings
                 </p>
 
                 {loading ? (
-                    <div className="rounded-xl bg-white p-8 text-center">
+                    <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-600 shadow-sm">
                         Loading bookings...
                     </div>
                 ) : (
                     <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
                         <table className="w-full text-left">
-                            <thead className="bg-slate-100">
+                            <thead className="bg-slate-50 text-slate-600">
                                 <tr>
                                     <th className="px-5 py-4">No.</th>
                                     <th className="px-5 py-4">User</th>
@@ -166,45 +168,53 @@ function AdminBookings() {
                             <tbody>
                                 {filteredBookings.map((booking, index) => (
                                     <tr
-                                        key={booking.booking_id}
-                                        className="border-t border-slate-100 hover:bg-slate-50"
+                                        key={booking.booking_id || index}
+                                        className="border-t border-slate-200 transition hover:bg-slate-50"
                                     >
-                                        <td className="px-5 py-4">{index + 1}</td>
+                                        <td className="px-5 py-4">
+                                            {index + 1}
+                                        </td>
 
                                         <td className="px-5 py-4">
-                                            <p className="font-semibold">
-                                                {booking.user_name}
+                                            <p className="font-semibold text-slate-800">
+                                                {booking.user_name || "—"}
                                             </p>
                                             <p className="text-sm text-slate-500">
-                                                {booking.user_email}
+                                                {booking.user_email || ""}
                                             </p>
                                         </td>
 
-                                        <td className="px-5 py-4">
-                                            {booking.space_name}
+                                        <td className="px-5 py-4 text-slate-700">
+                                            {booking.space_name || "—"}
                                         </td>
 
-                                        <td className="px-5 py-4">
+                                        <td className="whitespace-nowrap px-5 py-4 text-slate-700">
                                             {formatDate(booking.date)}
                                         </td>
 
-                                        <td className="whitespace-nowrap px-5 py-4">
-                                            {booking.start_time} - {booking.end_time}
+                                        <td className="whitespace-nowrap px-5 py-4 text-slate-700">
+                                            {booking.start_time || "—"} - {booking.end_time || "—"}
                                         </td>
 
-                                        <td className="px-5 py-4">
+                                        <td className="px-5 py-4 text-slate-700">
                                             {booking.purpose || "—"}
                                         </td>
 
                                         <td className="px-5 py-4">
                                             <span
-                                                className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                                                    String(booking.status).toLowerCase() === "confirmed"
+                                                className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                                                    String(booking.status || "").toLowerCase() === "confirmed"
                                                         ? "bg-green-100 text-green-700"
-                                                        : "bg-red-100 text-red-700"
+                                                        : String(booking.status || "").toLowerCase() === "cancelled"
+                                                        ? "bg-slate-200 text-slate-700"
+                                                        : String(booking.status || "").toLowerCase() === "approved"
+                                                        ? "bg-green-100 text-green-700"
+                                                        : String(booking.status || "").toLowerCase() === "rejected"
+                                                        ? "bg-red-100 text-red-700"
+                                                        : "bg-yellow-100 text-yellow-700"
                                                 }`}
                                             >
-                                                {booking.status}
+                                                {booking.status || "Pending"}
                                             </span>
                                         </td>
                                     </tr>

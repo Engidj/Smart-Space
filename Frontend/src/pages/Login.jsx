@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -51,8 +52,7 @@ function Login() {
       } else if (role === "user") {
         navigate("/home", { replace: true });
       } else {
-        console.error("Login response:", data);
-        throw new Error("User role was not found. Check the backend login response.");
+        throw new Error("User role was not found. Please contact support.");
       }
     } catch (error) {
       setError(error.message || "Something went wrong");
@@ -62,20 +62,25 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">
+    <div className="flex min-h-screen items-center justify-center bg-slate-100 px-5 py-8">
+      <div className="w-full max-w-md rounded-xl border border-slate-200  bg-white p-7 shadow-sm sm:p-9">
+        <div className="mb-8 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-xl font-bold text-white">
+            S
+          </div>
+
+          <h1 className="mt-4 text-3xl font-bold text-slate-900">
             Welcome Back
           </h1>
-          <p className="text-slate-500 mt-2">
+
+          <p className="mt-2 text-sm text-slate-500">
             Login to Smart Space Platform
           </p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               Email
             </label>
             <input
@@ -84,13 +89,14 @@ function Login() {
               value={form.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              autoComplete="email"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               Password
             </label>
             <input
@@ -99,13 +105,14 @@ function Login() {
               value={form.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              autoComplete="current-password"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               required
             />
           </div>
 
           {error && (
-            <p className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">
+            <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
               {error}
             </p>
           )}
@@ -113,17 +120,17 @@ function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-60"
+            className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="text-center text-slate-600 mt-6">
+        <p className="mt-6 text-center text-sm text-slate-600">
           Don't have an account?{" "}
           <Link
             to="/register"
-            className="text-blue-600 font-semibold hover:underline"
+            className="font-semibold text-blue-600 hover:underline"
           >
             Register
           </Link>

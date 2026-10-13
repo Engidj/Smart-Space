@@ -154,15 +154,15 @@ function AdminOrganizations() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50">
-            <nav className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-5 md:px-12">
-                <h1 className="text-2xl font-bold text-slate-900">
+        <div className="min-h-screen bg-slate-100">
+            <nav className="flex flex-wrap items-center justify-between gap-4 bg-slate-900 px-6 py-4 text-white shadow-lg md:px-12">
+                <h1 className="text-2xl font-bold">
                     Smart Space
                 </h1>
 
                 <button
                     onClick={() => navigate("/admin")}
-                    className="rounded-lg bg-slate-800 px-5 py-3 font-semibold text-white hover:bg-slate-700"
+                    className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
                 >
                     Back to Dashboard
                 </button>
@@ -170,29 +170,29 @@ function AdminOrganizations() {
 
             <main className="mx-auto max-w-7xl px-6 py-10">
                 <div className="mb-8">
-                    <h2 className="text-3xl font-bold text-slate-900">
+                    <h2 className="text-3xl font-bold text-slate-800">
                         Organization Management
                     </h2>
 
-                    <p className="mt-2 text-slate-500">
+                    <p className="mt-2 text-slate-600">
                         Create, view, edit, and delete organizations.
                     </p>
                 </div>
 
                 {message && (
-                    <div className="mb-5 rounded-lg bg-green-50 p-4 text-green-700">
+                    <div className="mb-5 rounded-lg border border-green-200 bg-green-50 p-4 text-green-700">
                         {message}
                     </div>
                 )}
 
                 {error && (
-                    <div className="mb-5 rounded-lg bg-red-50 p-4 text-red-700">
+                    <div className="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
                         {error}
                     </div>
                 )}
 
                 <div className="mb-10 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <h3 className="mb-5 text-xl font-bold text-slate-900">
+                    <h3 className="mb-5 text-xl font-bold text-slate-800">
                         {editingId ? "Edit Organization" : "Add Organization"}
                     </h3>
 
@@ -211,7 +211,7 @@ function AdminOrganizations() {
                                     maxLength={100}
                                     required
                                     placeholder="Organization name"
-                                    className="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+                                    className="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
 
@@ -228,7 +228,7 @@ function AdminOrganizations() {
                                     maxLength={50}
                                     required
                                     placeholder="College, Company, etc."
-                                    className="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+                                    className="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
 
@@ -245,7 +245,7 @@ function AdminOrganizations() {
                                     maxLength={150}
                                     required
                                     placeholder="City or address"
-                                    className="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+                                    className="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
                         </div>
@@ -254,20 +254,20 @@ function AdminOrganizations() {
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+                                className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 {saving
                                     ? "Saving..."
                                     : editingId
-                                        ? "Update Organization"
-                                        : "Create Organization"}
+                                    ? "Update Organization"
+                                    : "Create Organization"}
                             </button>
 
                             {editingId && (
                                 <button
                                     type="button"
                                     onClick={resetForm}
-                                    className="rounded-lg border border-slate-300 px-6 py-3 font-semibold text-slate-700 hover:bg-slate-100"
+                                    className="rounded-lg border border-slate-300 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-100"
                                 >
                                     Cancel Edit
                                 </button>
@@ -277,23 +277,23 @@ function AdminOrganizations() {
                 </div>
 
                 <div className="mb-5">
-                    <h3 className="text-xl font-bold text-slate-900">
+                    <h3 className="text-xl font-bold text-slate-800">
                         All Organizations
                     </h3>
 
-                    <p className="mt-1 text-slate-500">
+                    <p className="mt-1 text-slate-600">
                         Total organizations: {organizations.length}
                     </p>
                 </div>
 
                 {loading ? (
-                    <div className="rounded-xl border border-slate-200 bg-white p-8 text-center">
+                    <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-600 shadow-sm">
                         Loading organizations...
                     </div>
                 ) : (
                     <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
                         <table className="w-full text-left">
-                            <thead className="bg-slate-100">
+                            <thead className="bg-slate-50 text-slate-600">
                                 <tr>
                                     <th className="px-6 py-4">ID</th>
                                     <th className="px-6 py-4">Organization</th>
@@ -304,43 +304,39 @@ function AdminOrganizations() {
                             </thead>
 
                             <tbody>
-                                {organizations.map((organization,index) => (
+                                {organizations.map((organization, index) => (
                                     <tr
                                         key={organization.organization_id}
-                                        className="border-t border-slate-100 hover:bg-slate-50"
+                                        className="border-t border-slate-200 transition hover:bg-slate-50"
                                     >
                                         <td className="px-6 py-4">
-                                           {index + 1}
+                                            {index + 1}
                                         </td>
 
-                                        <td className="px-6 py-4 font-semibold text-slate-900">
+                                        <td className="px-6 py-4 font-semibold text-slate-800">
                                             {organization.name}
                                         </td>
 
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 text-slate-700">
                                             {organization.type}
                                         </td>
 
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 text-slate-700">
                                             {organization.location}
                                         </td>
 
                                         <td className="px-6 py-4">
                                             <div className="flex gap-2">
                                                 <button
-                                                    onClick={() =>
-                                                        startEditing(organization)
-                                                    }
-                                                    className="rounded-md bg-amber-500 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-600"
+                                                    onClick={() => startEditing(organization)}
+                                                    className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
                                                 >
                                                     Edit
                                                 </button>
 
                                                 <button
-                                                    onClick={() =>
-                                                        deleteOrganization(organization)
-                                                    }
-                                                    className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                                                    onClick={() => deleteOrganization(organization)}
+                                                    className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
                                                 >
                                                     Delete
                                                 </button>

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +17,7 @@ function FacilityManagement() {
       const response = await fetch(
         "http://localhost:5000/api/facilities",
         {
-          credentials: "include"
+          credentials: "include",
         }
       );
 
@@ -39,106 +40,119 @@ function FacilityManagement() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <nav className="h-18 bg-white border-b border-slate-200 flex items-center justify-between px-8 md:px-16">
+    <div className="min-h-screen w-full bg-slate-100 text-slate-900">
+      <nav className="flex min-h-[72px] items-center justify-between border-b border-slate-700 bg-slate-900 px-5 py-4 sm:px-8 lg:px-12">
         <button
           onClick={() => navigate("/manager")}
-          className="text-2xl font-bold text-slate-900"
+          className="text-xl font-bold text-white sm:text-2xl"
         >
           Smart Space
         </button>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 sm:gap-6">
           <button
             onClick={() => navigate("/manager")}
-            className="text-slate-700 hover:text-blue-600"
+            className="text-sm font-medium text-slate-300 transition hover:text-white sm:text-base"
           >
-            Manager Dashboard
+            Dashboard
           </button>
 
-          <button
-            className="text-blue-600 font-semibold"
-          >
+          <span className="text-sm font-semibold text-blue-400 sm:text-base">
             Facilities
-          </button>
+          </span>
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        <div className="flex items-center justify-between mb-8">
+      <main className="w-full px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
+        <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
           <div>
-            <h1 className="text-4xl font-bold text-slate-900">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
               Facility Management
             </h1>
-
-            <p className="text-slate-500 mt-2">
+            <p className="mt-2 text-slate-500">
               Manage facilities available in your organization.
             </p>
           </div>
 
           <button
             onClick={() => navigate("/manager/facilities/add")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold"
+            className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
           >
-            Add Facility
+            + Add Facility
           </button>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
-            {error}
+          <div className="mb-6 rounded-xl border border-red-200 bg-white p-5">
+            <p className="text-sm text-red-700">{error}</p>
+            <button
+              onClick={loadFacilities}
+              className="mt-4 rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700"
+            >
+              Retry
+            </button>
           </div>
         )}
 
         {loading ? (
-          <div className="bg-white border border-slate-200 rounded-xl p-10 text-center">
-            <p className="text-slate-500">
-              Loading facilities...
-            </p>
+          <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
+            <p className="text-slate-500">Loading facilities...</p>
           </div>
-        ) : facilities.length === 0 ? (
-          <div className="bg-white border border-slate-200 rounded-xl p-12 text-center">
-            <h2 className="text-xl font-bold text-slate-900">
-              No facilities found
-            </h2>
+        ) : !error && facilities.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-12 text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-xl font-bold text-blue-600">
+              F
+            </div>
 
-            <p className="text-slate-500 mt-2">
+            <h2 className="mt-4 text-xl font-bold">No facilities found</h2>
+            <p className="mt-2 text-slate-500">
               Add a facility to start managing resources.
             </p>
+
+            <button
+              onClick={() => navigate("/manager/facilities/add")}
+              className="mt-5 rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700"
+            >
+              + Add Your First Facility
+            </button>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        ) : !error ? (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {facilities.map((facility) => (
               <div
                 key={facility.facility_id}
-                className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm"
+                className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
               >
-                <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xl font-bold">
-                  F
+                <div className="flex items-start justify-between">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-xl font-bold text-blue-600">
+                    F
+                  </div>
+
+                  <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                    Facility
+                  </span>
                 </div>
 
-                <h2 className="text-xl font-bold text-slate-900 mt-5">
-                  {facility.name}
-                </h2>
+                <h2 className="mt-5 text-xl font-bold">{facility.name}</h2>
 
-                <p className="text-slate-500 mt-1">
+                <p className="mt-2 text-sm text-slate-500">
                   Facility ID: {facility.facility_id}
                 </p>
 
                 <button
                   onClick={() =>
                     navigate("/manager/facilities/assign", {
-                      state: { facility }
+                      state: { facility },
                     })
                   }
-                  className="w-full mt-6 bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-lg font-semibold"
+                  className="mt-6 w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
                 >
                   Assign to Space
                 </button>
               </div>
             ))}
           </div>
-        )}
+        ) : null}
       </main>
     </div>
   );

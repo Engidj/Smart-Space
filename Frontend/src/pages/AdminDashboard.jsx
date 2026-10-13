@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -118,14 +119,14 @@ function AdminDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="flex flex-wrap items-center justify-between gap-4 bg-gray-900 px-6 py-4 text-white shadow-lg">
+        <div className="min-h-screen bg-slate-100">
+            <nav className="flex flex-wrap items-center justify-between gap-4 bg-slate-900 px-6 py-4 text-white shadow-lg">
                 <h1 className="text-2xl font-bold">
                     Smart Space
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <span className="rounded-lg bg-gray-700 px-4 py-2 font-semibold">
+                    <span className="rounded-lg bg-slate-700 px-4 py-2 font-semibold">
                         Admin
                     </span>
 
@@ -141,23 +142,23 @@ function AdminDashboard() {
 
             <main className="mx-auto max-w-7xl p-6">
                 <div className="mb-8">
-                    <h2 className="text-3xl font-bold text-gray-800">
+                    <h2 className="text-3xl font-bold text-slate-800">
                         Admin Dashboard
                     </h2>
 
-                    <p className="mt-2 text-gray-600">
+                    <p className="mt-2 text-slate-600">
                         Manage users, organizations, spaces and bookings.
                     </p>
                 </div>
 
                 {loading && (
-                    <div className="rounded-lg bg-white p-6 text-center shadow">
+                    <div className="rounded-lg bg-white p-6 text-center shadow-sm">
                         Loading dashboard...
                     </div>
                 )}
 
                 {error && (
-                    <div className="mb-6 rounded-lg border border-red-200 bg-red-100 p-4 text-red-700">
+                    <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
                         {error}
                     </div>
                 )}
@@ -189,65 +190,65 @@ function AdminDashboard() {
                             ))}
                         </div>
 
-                        <section className="mb-8 rounded-xl bg-white p-6 shadow-md">
-                            <h3 className="mb-5 text-xl font-bold text-gray-800">
+                        <section className="mb-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <h3 className="mb-5 text-xl font-bold text-slate-800">
                                 Management
                             </h3>
 
                             <div className="flex flex-wrap gap-4">
                                 <button
                                     onClick={() => navigate("/admin/spaces")}
-                                    className="rounded-lg bg-green-600 px-5 py-3 font-medium text-white hover:bg-green-700"
+                                    className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
                                 >
                                     Manage Spaces
                                 </button>
 
                                 <button
                                     onClick={() => navigate("/admin/bookings")}
-                                    className="rounded-lg bg-orange-500 px-5 py-3 font-medium text-white hover:bg-orange-600"
+                                    className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
                                 >
                                     Manage Bookings
                                 </button>
 
                                 <button
                                     onClick={() => navigate("/admin/users")}
-                                    className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700"
+                                    className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
                                 >
                                     Manage Users
                                 </button>
 
                                 <button
                                     onClick={() => navigate("/admin/organizations")}
-                                    className="rounded-lg bg-purple-600 px-5 py-3 font-medium text-white hover:bg-purple-700"
+                                    className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
                                 >
                                     Manage Organizations
                                 </button>
 
                                 <button
                                     onClick={() => navigate("/admin/analytics")}
-                                    className="rounded-lg bg-indigo-600 px-5 py-3 font-medium text-white hover:bg-indigo-700"
+                                    className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
                                 >
                                     View Analytics
                                 </button>
 
                                 <button
                                     onClick={() => navigate("/admin/activity-logs")}
-                                    className="rounded-lg bg-gray-800 px-5 py-3 font-medium text-white hover:bg-gray-700"
+                                    className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
                                 >
                                     View Activity Logs
                                 </button>
                             </div>
                         </section>
 
-                        <section className="overflow-hidden rounded-xl bg-white shadow-md">
-                            <div className="flex flex-wrap items-center justify-between gap-3 border-b p-6">
-                                <h3 className="text-xl font-bold text-gray-800">
+                        <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-6">
+                                <h3 className="text-xl font-bold text-slate-800">
                                     Recent Bookings
                                 </h3>
 
                                 <button
                                     onClick={() => navigate("/admin/bookings")}
-                                    className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                                    className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition hover:bg-blue-700"
                                 >
                                     View All
                                 </button>
@@ -255,7 +256,7 @@ function AdminDashboard() {
 
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
-                                    <thead className="bg-gray-50 text-gray-600">
+                                    <thead className="bg-slate-50 text-slate-600">
                                         <tr>
                                             <th className="px-6 py-4">No.</th>
                                             <th className="px-6 py-4">User</th>
@@ -271,7 +272,7 @@ function AdminDashboard() {
                                             <tr>
                                                 <td
                                                     colSpan="6"
-                                                    className="px-6 py-8 text-center text-gray-500"
+                                                    className="px-6 py-8 text-center text-slate-500"
                                                 >
                                                     No bookings found.
                                                 </td>
@@ -293,18 +294,18 @@ function AdminDashboard() {
                                                 .map((booking, index) => (
                                                     <tr
                                                         key={booking.booking_id || index}
-                                                        className="border-t hover:bg-gray-50"
+                                                        className="border-t border-slate-200 hover:bg-slate-50"
                                                     >
                                                         <td className="px-6 py-4">
                                                             {index + 1}
                                                         </td>
 
                                                         <td className="px-6 py-4">
-                                                            <div className="font-medium text-gray-800">
+                                                            <div className="font-medium text-slate-800">
                                                                 {booking.user_name || "-"}
                                                             </div>
 
-                                                            <div className="text-sm text-gray-500">
+                                                            <div className="text-sm text-slate-500">
                                                                 {booking.user_email || ""}
                                                             </div>
                                                         </td>
@@ -329,7 +330,7 @@ function AdminDashboard() {
                                                                         : String(booking.status || "").toLowerCase() === "rejected"
                                                                         ? "bg-red-100 text-red-700"
                                                                         : String(booking.status || "").toLowerCase() === "cancelled"
-                                                                        ? "bg-gray-200 text-gray-700"
+                                                                        ? "bg-slate-200 text-slate-700"
                                                                         : "bg-yellow-100 text-yellow-700"
                                                                 }`}
                                                             >

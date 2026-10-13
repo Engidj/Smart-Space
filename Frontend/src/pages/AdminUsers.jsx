@@ -20,11 +20,11 @@ function AdminUsers() {
     try {
       const [usersResponse, orgsResponse] = await Promise.all([
         fetch("http://localhost:5000/api/admin/users", {
-          credentials: "include"
+          credentials: "include",
         }),
         fetch("http://localhost:5000/api/admin/organizations", {
-          credentials: "include"
-        })
+          credentials: "include",
+        }),
       ]);
 
       const usersData = await usersResponse.json();
@@ -91,13 +91,13 @@ function AdminUsers() {
           method: "PUT",
           credentials: "include",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             role,
             organization_id:
-              role === "manager" ? Number(organizationId) : null
-          })
+              role === "manager" ? Number(organizationId) : null,
+          }),
         }
       );
 
@@ -117,57 +117,78 @@ function AdminUsers() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <nav className="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center">
+    <div className="min-h-screen w-full bg-slate-100 text-slate-900">
+      <nav className="flex min-h-[72px] items-center justify-between border-b border-slate-700 bg-slate-900 px-5 py-4 sm:px-8 lg:px-12">
         <button
           onClick={() => navigate("/admin")}
-          className="text-2xl font-bold text-slate-900"
+          className="text-xl font-bold text-white sm:text-2xl"
         >
           Smart Space Admin
         </button>
 
         <button
           onClick={() => navigate("/admin")}
-          className="text-blue-600 font-semibold"
+          className="rounded-lg bg-blue-600 px-4 py-2.5 font-semibold text-white transition hover:bg-blue-700 sm:px-5"
         >
           Dashboard
         </button>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold text-slate-900">
-          User Management
-        </h1>
-
-        <p className="text-slate-500 mt-2 mb-8">
-          Manage user roles and assign organizations to managers.
-        </p>
+      <main className="w-full px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            User Management
+          </h1>
+          <p className="mt-2 text-slate-500">
+            Manage user roles and assign organizations to managers.
+          </p>
+        </div>
 
         {error && (
-          <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-5">
+          <div
+            role="alert"
+            className="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+          >
             {error}
           </div>
         )}
 
         {message && (
-          <div className="bg-green-50 text-green-700 p-4 rounded-lg mb-5">
+          <div
+            role="status"
+            className="mb-5 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700"
+          >
             {message}
           </div>
         )}
 
         {loading ? (
-          <p className="text-slate-500">Loading users...</p>
+          <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
+            <p className="text-slate-500">Loading users...</p>
+          </div>
         ) : (
-          <div className="bg-white border border-slate-200 rounded-xl overflow-x-auto">
+          <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
             <table className="w-full text-left">
-              <thead className="bg-slate-100">
+              <thead className="bg-slate-900 text-white">
                 <tr>
-                  <th className="p-4">Name</th>
-                  <th className="p-4">Email</th>
-                  <th className="p-4">Current Role</th>
-                  <th className="p-4">Role</th>
-                  <th className="p-4">Organization</th>
-                  <th className="p-4">Action</th>
+                  <th className="whitespace-nowrap px-5 py-4 text-sm font-semibold">
+                    Name
+                  </th>
+                  <th className="whitespace-nowrap px-5 py-4 text-sm font-semibold">
+                    Email
+                  </th>
+                  <th className="whitespace-nowrap px-5 py-4 text-sm font-semibold">
+                    Current Role
+                  </th>
+                  <th className="whitespace-nowrap px-5 py-4 text-sm font-semibold">
+                    Role
+                  </th>
+                  <th className="whitespace-nowrap px-5 py-4 text-sm font-semibold">
+                    Organization
+                  </th>
+                  <th className="whitespace-nowrap px-5 py-4 text-sm font-semibold">
+                    Action
+                  </th>
                 </tr>
               </thead>
 
@@ -180,30 +201,32 @@ function AdminUsers() {
                   return (
                     <tr
                       key={user.user_id}
-                      className="border-t border-slate-100"
+                      className="border-t border-slate-100 transition hover:bg-slate-50"
                     >
-                      <td className="p-4 font-medium">{user.name}</td>
+                      <td className="whitespace-nowrap px-5 py-4 font-semibold">
+                        {user.name}
+                      </td>
 
-                      <td className="p-4 text-slate-600">
+                      <td className="px-5 py-4 text-sm text-slate-600">
                         {user.email}
                       </td>
 
-                      <td className="p-4">
-                        <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                      <td className="px-5 py-4">
+                        <span className="inline-block rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
                           {user.role}
                         </span>
                       </td>
 
-                      <td className="p-4">
+                      <td className="px-5 py-4">
                         <select
                           value={role || "user"}
                           onChange={(e) =>
                             setSelectedRoles((previous) => ({
                               ...previous,
-                              [user.user_id]: e.target.value
+                              [user.user_id]: e.target.value,
                             }))
                           }
-                          className="border border-slate-300 rounded-lg px-3 py-2"
+                          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:border-blue-500"
                         >
                           <option value="user">User</option>
                           <option value="manager">Manager</option>
@@ -211,17 +234,17 @@ function AdminUsers() {
                         </select>
                       </td>
 
-                      <td className="p-4">
+                      <td className="px-5 py-4">
                         <select
                           value={organizationId || ""}
                           disabled={role !== "manager"}
                           onChange={(e) =>
                             setSelectedOrganizations((previous) => ({
                               ...previous,
-                              [user.user_id]: e.target.value
+                              [user.user_id]: e.target.value,
                             }))
                           }
-                          className="border border-slate-300 rounded-lg px-3 py-2 disabled:bg-slate-100 disabled:text-slate-400"
+                          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:border-blue-500 disabled:bg-slate-100 disabled:text-slate-400"
                         >
                           <option value="">
                             {role === "manager"
@@ -240,11 +263,11 @@ function AdminUsers() {
                         </select>
                       </td>
 
-                      <td className="p-4">
+                      <td className="px-5 py-4">
                         <button
                           onClick={() => saveUser(user.user_id)}
                           disabled={savingUser === user.user_id}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+                          className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {savingUser === user.user_id
                             ? "Saving..."
@@ -254,12 +277,19 @@ function AdminUsers() {
                     </tr>
                   );
                 })}
+
+                {users.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="px-5 py-10 text-center text-slate-500"
+                    >
+                      No users found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
-
-            {users.length === 0 && (
-              <p className="p-6 text-slate-500">No users found.</p>
-            )}
           </div>
         )}
       </main>
