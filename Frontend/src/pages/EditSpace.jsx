@@ -94,7 +94,7 @@ function EditSpace() {
 
   return (
     <div className="min-h-screen w-full bg-slate-100 text-slate-900">
-      <nav className="flex min-h-[72px] items-center justify-between border-b border-slate-700 bg-slate-900 px-5 py-4 sm:px-8 lg:px-12">
+      <nav className="flex min-h-20 items-center justify-between border-b border-slate-700 bg-slate-900 px-5 py-4 sm:px-8 lg:px-12">
         <button
           onClick={() => navigate("/manager")}
           className="text-xl font-bold text-white sm:text-2xl"

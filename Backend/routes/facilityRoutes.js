@@ -5,8 +5,6 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// ==================== ADD FACILITY ====================
-
 router.post("/", authMiddleware, async (req, res) => {
     try {
         const { name } = req.body;
@@ -46,9 +44,6 @@ router.post("/", authMiddleware, async (req, res) => {
         });
     }
 });
-
-// ==================== GET ALL FACILITIES ====================
-
 router.get("/", async (req, res) => {
     try {
         const [facilities] = await db.promise().query(
@@ -67,8 +62,6 @@ router.get("/", async (req, res) => {
         });
     }
 });
-
-// ==================== ADD FACILITY TO SPACE ====================
 
 
 
@@ -233,7 +226,7 @@ router.post("/space/:spaceId", authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== GET SPACE FACILITIES ====================
+
 
 router.get("/space/:spaceId", async (req, res) => {
     try {

@@ -1,10 +1,9 @@
 const express = require("express");
 const db = require("../config/db");
+const roleMiddleware = require("../middleware/roleMiddleware");
 const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
-
-// ==================== CREATE BOOKING ====================
 
 router.post("/", authMiddleware, async (req, res) => {
     try {
@@ -28,7 +27,6 @@ router.post("/", authMiddleware, async (req, res) => {
             });
         }
 
-        // Check space exists
         const [spaces] = await db.promise().query(
             "SELECT space_id FROM spaces WHERE space_id = ?",
             [space_id]
@@ -40,7 +38,7 @@ router.post("/", authMiddleware, async (req, res) => {
             });
         }
 
-        // Check schedule conflict
+        
         const [scheduleConflicts] = await db.promise().query(
             `SELECT schedule_id
              FROM schedules
@@ -62,7 +60,6 @@ router.post("/", authMiddleware, async (req, res) => {
             });
         }
 
-        // Check booking conflict
         const [bookingConflicts] = await db.promise().query(
             `SELECT booking_id
              FROM bookings
@@ -85,7 +82,7 @@ router.post("/", authMiddleware, async (req, res) => {
             });
         }
 
-        // Create booking
+      
         const [result] = await db.promise().query(
             `INSERT INTO bookings
              (user_id, space_id, date, start_time, end_time, purpose, status)
@@ -114,7 +111,6 @@ router.post("/", authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== MY BOOKINGS ====================
 
 router.get("/my", authMiddleware, async (req, res) => {
     try {
@@ -151,7 +147,54 @@ router.get("/my", authMiddleware, async (req, res) => {
     }
 });
 
-// ==================== CANCEL BOOKING ====================
+
+router.get(
+    "/manager",
+    authMiddleware,
+    roleMiddleware("manager"),
+    async (req, res) => {
+        try {
+            if (!req.user.organizationId) {
+                return res.status(403).json({
+                    message: "Your account is not assigned to an organization"
+                });
+            }
+
+            const [bookings] = await db.promise().query(
+                `SELECT
+                    b.booking_id,
+                    b.user_id,
+                    u.name AS user_name,
+                    u.email AS user_email,
+                    s.space_id,
+                    s.name AS space_name,
+                    s.type,
+                    s.location,
+                    DATE_FORMAT(b.date, '%Y-%m-%d') AS date,
+                    b.start_time,
+                    b.end_time,
+                    b.purpose,
+                    b.status
+                 FROM bookings b
+                 INNER JOIN spaces s
+                    ON b.space_id = s.space_id
+                 INNER JOIN users u
+                    ON b.user_id = u.user_id
+                 WHERE s.organization_id = ?
+                 ORDER BY b.date DESC, b.start_time DESC`,
+                [req.user.organizationId]
+            );
+
+            res.json({ bookings });
+        } catch (error) {
+            console.error("Get manager bookings error:", error);
+
+            res.status(500).json({
+                message: "Server error"
+            });
+        }
+    }
+);
 
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
