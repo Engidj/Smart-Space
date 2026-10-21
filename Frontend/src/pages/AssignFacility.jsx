@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -52,7 +51,7 @@ function AssignFacility() {
     setSuccess("");
 
     if (!selectedSpace) {
-      setError("Please select a space");
+      setError("Please select a space.");
       return;
     }
 
@@ -84,7 +83,7 @@ function AssignFacility() {
         throw new Error(data.message || "Failed to assign facility");
       }
 
-      setSuccess("Facility assigned successfully");
+      setSuccess("Facility assigned successfully.");
 
       navigate("/manager/facilities", {
         state: {
@@ -98,126 +97,201 @@ function AssignFacility() {
     }
   };
 
+  const navLink =
+    "rounded-lg px-3 py-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400";
+
+  const inputClass =
+    "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition hover:border-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100";
+
+  const primaryButton =
+    "inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60";
+
+  const secondaryButton =
+    "inline-flex flex-1 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 disabled:cursor-not-allowed disabled:opacity-60";
+
   if (!facility) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-100 px-5">
-        <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-xl font-bold text-blue-600">
-            F
-          </div>
-
-          <h2 className="mt-4 text-xl font-bold text-slate-900">
-            Facility not found
-          </h2>
-
-          <p className="mt-2 text-slate-500">
-            Open this page from Facility Management.
-          </p>
+      <div className="min-h-screen w-full bg-slate-100 text-slate-900">
+        <nav className="flex min-h-[64px] items-center justify-between border-b border-slate-800 bg-slate-900 px-5 py-3 text-white shadow-sm md:px-8">
+          <button
+            onClick={() => navigate("/manager")}
+            className="text-xl font-bold tracking-tight transition hover:text-blue-200"
+          >
+            Smart Space
+          </button>
 
           <button
             onClick={() => navigate("/manager/facilities")}
-            className="mt-5 rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
+            className={`${navLink} text-slate-300 hover:bg-slate-800 hover:text-white`}
           >
-            Back to Facilities
+            Facilities
           </button>
-        </div>
+        </nav>
+
+        <main className="flex justify-center px-5 py-12">
+          <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+            <h1 className="text-xl font-bold text-slate-900">
+              Facility not found
+            </h1>
+
+            <p className="mt-2 text-sm leading-6 text-slate-500">
+              Open this page from Facility Management to select a facility.
+            </p>
+
+            <button
+              onClick={() => navigate("/manager/facilities")}
+              className={`${primaryButton} mt-6`}
+            >
+              Back to Facilities
+            </button>
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen w-full bg-slate-100 text-slate-900">
-      <nav className="flex min-h-[72px] items-center justify-between border-b border-slate-700 bg-slate-900 px-5 py-4 sm:px-8 lg:px-12">
+      {/* Consistent Manager Navbar */}
+      <nav className="sticky top-0 z-20 flex min-h-[64px] w-full items-center justify-between border-b border-slate-800 bg-slate-900 px-5 py-3 text-white shadow-sm md:px-8">
         <button
           onClick={() => navigate("/manager")}
-          className="text-xl font-bold text-white sm:text-2xl"
+          className="shrink-0 text-xl font-bold tracking-tight transition hover:text-blue-200"
         >
           Smart Space
         </button>
 
-        <button
-          onClick={() => navigate("/manager/facilities")}
-          className="text-sm font-medium text-slate-300 transition hover:text-white sm:text-base"
-        >
-          Facilities
-        </button>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <button
+            onClick={() => navigate("/manager")}
+            className={`${navLink} text-slate-300 hover:bg-slate-800 hover:text-white`}
+          >
+            Dashboard
+          </button>
+
+          <span
+            aria-current="page"
+            className={`${navLink} bg-blue-600 text-white shadow-sm`}
+          >
+            Facilities
+          </span>
+        </div>
       </nav>
 
-      <main className="w-full px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
-        <div className="mx-auto max-w-2xl">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Assign Facility
-            </h1>
-            <p className="mt-2 text-slate-500">
-              Assign a facility to a space in your organization.
+     <main className="w-full px-5 py-8 md:px-8 md:py-10 lg:px-12">
+        {/* Page Heading */}
+        <div className="mb-7">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Assign Facility
+          </h1>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
+            Select a space to assign this facility to.
+          </p>
+        </div>
+
+        {/* Assignment Form */}
+        <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="border-b border-slate-200 px-5 py-5 sm:px-7">
+            <h2 className="text-lg font-bold text-slate-900">
+              Facility Details
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Review the facility and choose the destination space.
             </p>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <div className="mb-6 rounded-lg border border-blue-100 bg-blue-50 p-4">
-              <p className="text-sm font-medium text-slate-500">Selected Facility</p>
-              <p className="mt-1 text-lg font-bold text-slate-900">
-                {facility.name}
+          <div className="space-y-6 p-5 sm:p-7">
+            {/* Selected Facility */}
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Selected Facility
               </p>
-              <p className="mt-1 text-sm text-slate-500">
-                Facility ID: {facility.facility_id}
-              </p>
+
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <h3 className="break-words text-lg font-bold text-slate-900">
+                  {facility.name || "Unnamed Facility"}
+                </h3>
+
+                <span className="shrink-0 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                  #{facility.facility_id}
+                </span>
+              </div>
             </div>
 
+            {/* Error */}
             {error && (
               <div
                 role="alert"
-                className="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+                className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
               >
                 {error}
               </div>
             )}
 
+            {/* Success */}
             {success && (
               <div
                 role="status"
-                className="mb-5 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700"
+                className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"
               >
                 {success}
               </div>
             )}
 
+            {/* Loading */}
             {loading ? (
-              <p className="py-5 text-center text-slate-500">
-                Loading spaces...
-              </p>
+              <div className="py-8 text-center">
+                <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
+
+                <p className="text-sm font-medium text-slate-700">
+                  Loading spaces...
+                </p>
+              </div>
             ) : (
               <form onSubmit={handleSubmit}>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">
-                  Select Space
+                <label
+                  htmlFor="space-select"
+                  className="mb-2 block text-sm font-semibold text-slate-700"
+                >
+                  Select Space <span className="text-red-500">*</span>
                 </label>
 
                 <select
+                  id="space-select"
                   value={selectedSpace}
-                  onChange={(e) => setSelectedSpace(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedSpace(e.target.value);
+                    setError("");
+                    setSuccess("");
+                  }}
                   required
-                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  disabled={saving || spaces.length === 0}
+                  className={inputClass}
                 >
-                  <option value="">Select a space</option>
+                  <option value="">Choose a space</option>
+
                   {spaces.map((space) => (
                     <option key={space.space_id} value={space.space_id}>
-                      {space.name} - {space.location}
+                      {space.name} — {space.location || "Location not specified"}
                     </option>
                   ))}
                 </select>
 
-                {spaces.length === 0 && !error && (
+                {!error && spaces.length === 0 && (
                   <p className="mt-2 text-sm text-slate-500">
-                    No spaces found in your organization.
+                    No spaces found. Add a space before assigning a facility.
                   </p>
                 )}
 
-                <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row">
+                {/* Form Actions */}
+                <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row">
                   <button
                     type="button"
                     onClick={() => navigate("/manager/facilities")}
-                    className="flex-1 rounded-lg border border-slate-300 py-3 font-semibold text-slate-700 transition hover:bg-slate-50"
+                    disabled={saving}
+                    className={secondaryButton}
                   >
                     Cancel
                   </button>
@@ -225,15 +299,22 @@ function AssignFacility() {
                   <button
                     type="submit"
                     disabled={saving || loading || spaces.length === 0}
-                    className="flex-1 rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className={primaryButton}
                   >
-                    {saving ? "Assigning..." : "Assign Facility"}
+                    {saving ? (
+                      <>
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                        Assigning...
+                      </>
+                    ) : (
+                      "Assign Facility"
+                    )}
                   </button>
                 </div>
               </form>
             )}
           </div>
-        </div>
+        </section>
       </main>
     </div>
   );

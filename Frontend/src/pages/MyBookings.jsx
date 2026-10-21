@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +7,7 @@ function MyBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [cancellingId, setCancellingId] = useState(null);
 
   const loadBookings = async () => {
     try {
@@ -26,7 +26,7 @@ function MyBookings() {
 
       setBookings(data.bookings || []);
     } catch (error) {
-      setError(error.message);
+      setError(error.message || "Something went wrong while loading bookings.");
     } finally {
       setLoading(false);
     }
@@ -44,6 +44,9 @@ function MyBookings() {
     if (!confirmCancel) return;
 
     try {
+      setCancellingId(bookingId);
+      setError("");
+
       const response = await fetch(
         `http://localhost:5000/api/bookings/${bookingId}`,
         {
@@ -58,150 +61,371 @@ function MyBookings() {
         throw new Error(data.message || "Failed to cancel booking");
       }
 
-      loadBookings();
+      await loadBookings();
     } catch (error) {
-      setError(error.message);
+      setError(error.message || "Unable to cancel this booking.");
+    } finally {
+      setCancellingId(null);
     }
   };
+
+  const navLink =
+    "whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400";
+
+  const primaryButton =
+    "inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60";
 
   return (
     <div className="min-h-screen w-full bg-slate-100 text-slate-900">
       {/* Navbar */}
-      <nav className="flex w-full items-center justify-between bg-slate-900 px-5 py-3 text-white md:px-8">
+      <nav className="sticky top-0 z-20 flex w-full items-center justify-between border-b border-slate-800 bg-slate-900 px-5 py-3 text-white shadow-sm md:px-8">
         <button
           onClick={() => navigate("/home")}
-          className="text-xl font-bold"
+          className="shrink-0 text-xl font-bold tracking-tight transition hover:text-blue-200"
         >
           Smart Space
         </button>
 
-        <div className="flex items-center gap-3 md:gap-6">
+        <div className="flex items-center gap-1 sm:gap-2">
           <button
             onClick={() => navigate("/home")}
-            className="hidden text-sm text-slate-200 hover:text-white sm:block"
+            className={`${navLink} text-slate-300 hover:bg-slate-800 hover:text-white`}
           >
             Home
           </button>
 
           <button
             onClick={() => navigate("/search")}
-            className="text-sm text-slate-200 hover:text-white"
+            className={`${navLink} text-slate-300 hover:bg-slate-800 hover:text-white`}
           >
             Find Space
           </button>
 
-          <span className="text-sm font-semibold text-blue-300">
+          <span
+            aria-current="page"
+            className={`${navLink} bg-blue-600 text-white shadow-sm`}
+          >
             My Bookings
           </span>
         </div>
       </nav>
 
-      <main className="w-full px-5 py-7 md:px-10">
-        <div className="mb-7">
-          <h1 className="text-3xl font-bold text-slate-900">
-            My Bookings
-          </h1>
-          <p className="mt-2 text-slate-600">
-            View and manage your space bookings.
-          </p>
+      <main className="mx-auto w-full max-w-7xl px-5 py-8 md:px-8 md:py-10">
+        {/* Page heading */}
+        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Your dashboard
+            </p>
+
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+              My Bookings
+            </h1>
+
+            <p className="mt-2 text-sm leading-6 text-slate-600 md:text-base">
+              View your reservations and manage your booked spaces.
+            </p>
+          </div>
+
+          {!loading && !error && bookings.length > 0 && (
+            <div className="flex items-center gap-3 self-start rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm sm:self-auto">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="5" width="18" height="16" rx="2" />
+                  <path d="M16 3v4M8 3v4M3 10h18" />
+                </svg>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-slate-500">
+                  Total bookings
+                </p>
+                <p className="text-xl font-bold text-slate-900">
+                  {bookings.length}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
+        {/* Error message */}
         {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            {error}
+          <div
+            role="alert"
+            className="mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="mt-0.5 h-5 w-5 shrink-0"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 8v4m0 4h.01" />
+            </svg>
+
+            <div className="flex-1">
+              <p className="font-semibold">Something went wrong</p>
+              <p className="mt-1">{error}</p>
+            </div>
+
+            <button
+              onClick={loadBookings}
+              disabled={loading}
+              className="shrink-0 rounded-lg px-3 py-1.5 font-semibold hover:bg-red-100 disabled:opacity-60"
+            >
+              Retry
+            </button>
           </div>
         )}
 
+        {/* Loading state */}
         {loading ? (
-          <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
-            <p className="text-slate-500">Loading bookings...</p>
+          <div className="rounded-xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
+
+            <h2 className="font-semibold text-slate-900">
+              Loading your bookings
+            </h2>
+
+            <p className="mt-2 text-sm text-slate-500">
+              Please wait while we retrieve your reservations.
+            </p>
           </div>
-        ) : bookings.length === 0 ? (
-          <div className="rounded-xl border border-slate-200 border-t-4 border-t-blue-600 bg-white p-10 text-center">
-            <h2 className="text-xl font-bold text-slate-900">
+        ) : error ? null : bookings.length === 0 ? (
+          /* Empty state */
+          <div className="rounded-xl border border-slate-200 bg-white px-6 py-14 text-center shadow-sm">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                className="h-8 w-8"
+                aria-hidden="true"
+              >
+                <rect x="3" y="5" width="18" height="16" rx="2" />
+                <path d="M16 3v4M8 3v4M3 10h18M8 14h3m-3 3h7" />
+              </svg>
+            </div>
+
+            <h2 className="mt-5 text-xl font-bold text-slate-900">
               No bookings yet
             </h2>
 
-            <p className="mt-2 text-slate-500">
-              Find an available space and make your first booking.
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+              You haven't booked a space yet. Explore available spaces and
+              reserve one for your next activity.
             </p>
 
             <button
               onClick={() => navigate("/search")}
-              className="mt-6 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
+              className={`${primaryButton} mt-6 gap-2`}
             >
               Find a Space
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14m-6-6 6 6-6 6" />
+              </svg>
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {bookings.map((booking) => (
-              <div
-                key={booking.booking_id}
-                className="rounded-xl border border-slate-200 border-t-4 border-t-blue-600 bg-white p-6 shadow-sm"
-              >
-                <div className="mb-5 flex items-start justify-between gap-3">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900">
-                      {booking.space_name}
-                    </h2>
-                    <p className="mt-1 text-sm text-slate-500">
-                      {booking.type}
-                    </p>
-                  </div>
+          /* Booking cards */
+          <>
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <h2 className="text-lg font-bold text-slate-900">
+                Your reservations
+              </h2>
 
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                      booking.status === "confirmed"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
+              <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
+                {bookings.length} {bookings.length === 1 ? "booking" : "bookings"}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {bookings.map((booking) => {
+                const isConfirmed = booking.status === "confirmed";
+                const isCancelling = cancellingId === booking.booking_id;
+
+                return (
+                  <article
+                    key={booking.booking_id}
+                    className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
                   >
-                    {booking.status}
-                  </span>
-                </div>
+                    <div className="h-1.5 bg-blue-600" />
 
-                <div className="space-y-3 text-sm text-slate-600">
-                  <p>
-                    <span className="font-semibold text-slate-900">
-                      Date:
-                    </span>{" "}
-                    {booking.date}
-                  </p>
+                    <div className="flex flex-1 flex-col p-5 sm:p-6">
+                      {/* Card header */}
+                      <div className="mb-5 flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <h3 className="break-words text-lg font-bold text-slate-900">
+                            {booking.space_name || "Unnamed Space"}
+                          </h3>
 
-                  <p>
-                    <span className="font-semibold text-slate-900">
-                      Time:
-                    </span>{" "}
-                    {booking.start_time} - {booking.end_time}
-                  </p>
+                          <p className="mt-1 text-sm text-slate-500">
+                            {booking.type || "Space"}
+                          </p>
+                        </div>
 
-                  <p>
-                    <span className="font-semibold text-slate-900">
-                      Location:
-                    </span>{" "}
-                    {booking.location}
-                  </p>
+                        <span
+                          className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold capitalize ${
+                            isConfirmed
+                              ? "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200"
+                              : "bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200"
+                          }`}
+                        >
+                          {booking.status || "Unknown"}
+                        </span>
+                      </div>
 
-                  <p>
-                    <span className="font-semibold text-slate-900">
-                      Purpose:
-                    </span>{" "}
-                    {booking.purpose || "General Booking"}
-                  </p>
-                </div>
+                      {/* Date and time */}
+                      <div className="mb-4 grid grid-cols-2 gap-3">
+                        <div className="rounded-lg bg-slate-50 p-3">
+                          <div className="mb-2 flex items-center gap-2 text-slate-500">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              className="h-4 w-4"
+                              aria-hidden="true"
+                            >
+                              <rect x="3" y="5" width="18" height="16" rx="2" />
+                              <path d="M16 3v4M8 3v4M3 10h18" />
+                            </svg>
+                            <span className="text-xs font-medium">Date</span>
+                          </div>
 
-                {booking.status === "confirmed" && (
-                  <button
-                    onClick={() => cancelBooking(booking.booking_id)}
-                    className="mt-6 w-full rounded-lg border border-red-300 py-3 font-semibold text-red-600 hover:bg-red-50"
-                  >
-                    Cancel Booking
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
+                          <p className="break-words text-sm font-semibold text-slate-900">
+                            {booking.date || "Not specified"}
+                          </p>
+                        </div>
+
+                        <div className="rounded-lg bg-slate-50 p-3">
+                          <div className="mb-2 flex items-center gap-2 text-slate-500">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              className="h-4 w-4"
+                              aria-hidden="true"
+                            >
+                              <circle cx="12" cy="12" r="9" />
+                              <path d="M12 7v5l3 2" />
+                            </svg>
+                            <span className="text-xs font-medium">Time</span>
+                          </div>
+
+                          <p className="break-words text-sm font-semibold text-slate-900">
+                            {booking.start_time} - {booking.end_time}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Booking information */}
+                      <div className="flex-1 space-y-4">
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              className="h-4 w-4"
+                              aria-hidden="true"
+                            >
+                              <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                              <circle cx="12" cy="10" r="2.5" />
+                            </svg>
+                          </div>
+
+                          <div className="min-w-0">
+                            <p className="text-xs font-medium text-slate-500">
+                              Location
+                            </p>
+                            <p className="mt-1 break-words text-sm font-semibold text-slate-800">
+                              {booking.location || "Not specified"}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              className="h-4 w-4"
+                              aria-hidden="true"
+                            >
+                              <path d="M12 3v18m9-9H3" />
+                              <circle cx="12" cy="12" r="9" />
+                            </svg>
+                          </div>
+
+                          <div className="min-w-0">
+                            <p className="text-xs font-medium text-slate-500">
+                              Purpose
+                            </p>
+                            <p className="mt-1 break-words text-sm font-semibold text-slate-800">
+                              {booking.purpose || "General Booking"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Cancel booking */}
+                      {isConfirmed ? (
+                        <button
+                          onClick={() => cancelBooking(booking.booking_id)}
+                          disabled={cancellingId !== null}
+                          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-3 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {isCancelling ? (
+                            <>
+                              <span className="h-4 w-4 animate-spin rounded-full border-2 border-red-200 border-t-red-600" />
+                              Cancelling...
+                            </>
+                          ) : (
+                            "Cancel Booking"
+                          )}
+                        </button>
+                      ) : (
+                        <div className="mt-6 rounded-lg bg-slate-50 px-4 py-3 text-center text-sm text-slate-500">
+                          This booking cannot be cancelled.
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </>
         )}
       </main>
     </div>
