@@ -198,9 +198,7 @@ function SearchSpaces() {
 
       <main className="mx-auto w-full max-w-7xl px-5 py-8 md:px-8 md:py-10">
         <section className="mb-8">
-          <p className="text-xs font-bold uppercase tracking-widest text-blue-700">
-            Explore spaces
-          </p>
+          
 
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             Find a Space
@@ -216,36 +214,7 @@ function SearchSpaces() {
           onSubmit={searchSpaces}
           className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
         >
-          <div className="border-b border-slate-200 px-5 py-5 sm:px-7">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-                <svg
-                  className="h-6 w-6"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  aria-hidden="true"
-                >
-                  <circle cx="11" cy="11" r="7" />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m16 16 4 4"
-                  />
-                </svg>
-              </div>
-
-              <div>
-                <h2 className="text-lg font-bold text-slate-900">
-                  Search Requirements
-                </h2>
-                <p className="mt-1 text-sm text-slate-500">
-                  Select the details for your preferred space.
-                </p>
-              </div>
-            </div>
-          </div>
+          
 
           <div className="p-5 sm:p-7">
             <div className="grid grid-cols-1 gap-x-5 gap-y-5 md:grid-cols-2 lg:grid-cols-3">
@@ -434,9 +403,7 @@ function SearchSpaces() {
                 )}
               </button>
 
-              <p className="text-xs text-slate-500">
-                <span className="text-blue-600">*</span> Required fields
-              </p>
+              
             </div>
           </div>
         </form>

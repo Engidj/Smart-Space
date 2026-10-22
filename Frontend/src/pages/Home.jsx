@@ -88,7 +88,12 @@ function Home() {
               {user?.name || "User"}
             </span>
           </div>
-
+          <Link
+  to="/about"
+  className="rounded-lg px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+>
+  About
+</Link>
           <button
             onClick={logout}
             disabled={loggingOut}
@@ -140,10 +145,7 @@ function Home() {
         {/* Dashboard */}
         <section className="mt-9 sm:mt-10">
           <div className="mb-5">
-            <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
-              Overview
-            </p>
-
+        
             <h2 className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
               Your Dashboard
             </h2>

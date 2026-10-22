@@ -22,6 +22,7 @@ import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminActivityLogs from "./pages/AdminActivityLogs";
 import ScheduleManagement from "./pages/ScheduleManagement";
 import GuestRoute from "./components/GuestRoute";
+import About from "./pages/About";
 function App() {
   return (
     <BrowserRouter>
@@ -29,14 +30,14 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
 
         <Route
-  path="/login"
-  element={
-    <GuestRoute>
-      <Login />
-    </GuestRoute>
-  }
-/>
-
+          path="/login"
+          element={
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
+          }
+        />
+        <Route path="/about" element={<About />} />
         <Route path="/register" element={<Register />} />
 
         <Route
@@ -177,25 +178,24 @@ function App() {
           }
         />
         <Route
-    path="/manager/schedules"
-    element={
-        <ProtectedRoute allowedRoles={["manager", "admin"]}>
-            <ScheduleManagement />
-        </ProtectedRoute>
-    }
-/>
+          path="/manager/schedules"
+          element={
+            <ProtectedRoute allowedRoles={["manager", "admin"]}>
+              <ScheduleManagement />
+            </ProtectedRoute>
+          }
+        />
         <Route
-    path="/admin/activity-logs"
-    element={
-        <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminActivityLogs />
-        </ProtectedRoute>
-    }
-/>
+          path="/admin/activity-logs"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminActivityLogs />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
 }
-
 
 export default App;

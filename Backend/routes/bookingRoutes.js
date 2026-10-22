@@ -5,6 +5,28 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+router.get("/purposes", authMiddleware, async (req, res) => {
+    try {
+        const [rows] = await db.promise().query(
+            `SELECT DISTINCT TRIM(purpose) AS purpose
+             FROM bookings
+             WHERE purpose IS NOT NULL
+             AND TRIM(purpose) <> ''
+             ORDER BY purpose ASC`
+        );
+
+        res.json({
+            purposes: rows.map((row) => row.purpose)
+        });
+    } catch (error) {
+        console.error("Get booking purposes error:", error);
+
+        res.status(500).json({
+            message: "Failed to load booking purposes"
+        });
+    }
+});
+
 router.post("/", authMiddleware, async (req, res) => {
     try {
         const {
@@ -38,7 +60,6 @@ router.post("/", authMiddleware, async (req, res) => {
             });
         }
 
-        
         const [scheduleConflicts] = await db.promise().query(
             `SELECT schedule_id
              FROM schedules
@@ -46,12 +67,7 @@ router.post("/", authMiddleware, async (req, res) => {
              AND date = ?
              AND start_time < ?
              AND end_time > ?`,
-            [
-                space_id,
-                date,
-                end_time,
-                start_time
-            ]
+            [space_id, date, end_time, start_time]
         );
 
         if (scheduleConflicts.length > 0) {
@@ -68,12 +84,7 @@ router.post("/", authMiddleware, async (req, res) => {
              AND status != 'cancelled'
              AND start_time < ?
              AND end_time > ?`,
-            [
-                space_id,
-                date,
-                end_time,
-                start_time
-            ]
+            [space_id, date, end_time, start_time]
         );
 
         if (bookingConflicts.length > 0) {
@@ -82,7 +93,6 @@ router.post("/", authMiddleware, async (req, res) => {
             });
         }
 
-      
         const [result] = await db.promise().query(
             `INSERT INTO bookings
              (user_id, space_id, date, start_time, end_time, purpose, status)
@@ -93,7 +103,9 @@ router.post("/", authMiddleware, async (req, res) => {
                 date,
                 start_time,
                 end_time,
-                purpose || null
+                purpose && purpose.trim()
+                    ? purpose.trim()
+                    : "General Booking"
             ]
         );
 
@@ -110,7 +122,6 @@ router.post("/", authMiddleware, async (req, res) => {
         });
     }
 });
-
 
 router.get("/my", authMiddleware, async (req, res) => {
     try {
@@ -134,9 +145,7 @@ router.get("/my", authMiddleware, async (req, res) => {
             [req.user.userId]
         );
 
-        res.json({
-            bookings
-        });
+        res.json({ bookings });
 
     } catch (error) {
         console.error("Get bookings error:", error);
@@ -146,7 +155,6 @@ router.get("/my", authMiddleware, async (req, res) => {
         });
     }
 });
-
 
 router.get(
     "/manager",

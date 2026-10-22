@@ -275,10 +275,7 @@ function ScheduleManagement() {
             Schedule Management
           </h1>
 
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-            Create and manage time slots for your spaces. Select a space to
-            view its schedules or update an existing reservation slot.
-          </p>
+          
         </div>
 
         {/* Feedback messages */}
@@ -395,7 +392,7 @@ function ScheduleManagement() {
 
                 {spaces.map((space) => (
                   <option key={space.space_id} value={space.space_id}>
-                    {space.name} (ID: {space.space_id})
+                    {space.name} 
                   </option>
                 ))}
               </select>

@@ -24,7 +24,21 @@ function MyBookings() {
         throw new Error(data.message || "Failed to load bookings");
       }
 
-      setBookings(data.bookings || []);
+      // Sort bookings by date and start time (latest first).
+      setBookings(
+        [...(data.bookings || [])].sort((a, b) => {
+          const dateA = String(a.date).slice(0, 10);
+          const dateB = String(b.date).slice(0, 10);
+
+          const timeA = String(a.start_time).slice(0, 8);
+          const timeB = String(b.start_time).slice(0, 8);
+
+          const dateTimeA = `${dateA} ${timeA}`;
+          const dateTimeB = `${dateB} ${timeB}`;
+
+          return dateTimeB.localeCompare(dateTimeA);
+        })
+      );
     } catch (error) {
       setError(error.message || "Something went wrong while loading bookings.");
     } finally {
@@ -114,17 +128,9 @@ function MyBookings() {
         {/* Page heading */}
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-600">
-              Your dashboard
-            </p>
-
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
               My Bookings
             </h1>
-
-            <p className="mt-2 text-sm leading-6 text-slate-600 md:text-base">
-              View your reservations and manage your booked spaces.
-            </p>
           </div>
 
           {!loading && !error && bookings.length > 0 && (
@@ -251,16 +257,6 @@ function MyBookings() {
         ) : (
           /* Booking cards */
           <>
-            <div className="mb-5 flex items-center justify-between gap-3">
-              <h2 className="text-lg font-bold text-slate-900">
-                Your reservations
-              </h2>
-
-              <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
-                {bookings.length} {bookings.length === 1 ? "booking" : "bookings"}
-              </span>
-            </div>
-
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
               {bookings.map((booking) => {
                 const isConfirmed = booking.status === "confirmed";

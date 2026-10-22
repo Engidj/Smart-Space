@@ -260,10 +260,7 @@ function ManagerDashboard() {
               Manager Dashboard
             </h1>
 
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-              Manage your spaces, review reservations, and keep track of
-              activity across your organization.
-            </p>
+           
           </div>
 
           <div className="flex flex-wrap gap-3">
@@ -308,7 +305,7 @@ function ManagerDashboard() {
               Platform Overview
             </h2>
             <p className="mt-1 text-sm text-blue-700">
-              A quick summary of your managed spaces and bookings.
+              A quick summary of  managed spaces and bookings.
             </p>
           </div>
 

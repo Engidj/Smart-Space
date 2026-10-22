@@ -1,5 +1,164 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+const SPACE_TYPES = [
+  "Classroom",
+  "Laboratory",
+  "Seminar Hall",
+  "Conference Room",
+  "Meeting Room",
+  "Auditorium",
+  "Computer Lab",
+  "Library",
+  "Training Room",
+  "Lecture Hall",
+  "Discussion Room",
+  "Innovation Lab",
+  "Recording Studio",
+  "Exam Hall",
+  "Multipurpose Hall",
+];
+
+function SpaceTypeDropdown({
+  value,
+  onChange,
+  disabled,
+  inputClass,
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleOutsideClick(event) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+        setSearch("");
+      }
+    }
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  const filteredTypes = SPACE_TYPES.filter((type) =>
+    type.toLowerCase().includes(search.toLowerCase().trim())
+  );
+
+  function selectType(type) {
+    onChange({
+      target: {
+        name: "type",
+        value: type,
+      },
+    });
+
+    setIsOpen(false);
+    setSearch("");
+  }
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        id="space-type"
+        type="button"
+        disabled={disabled}
+        onClick={() => setIsOpen((previous) => !previous)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        className={`${inputClass} flex items-center justify-between gap-3 text-left`}
+      >
+        <span className={value ? "text-slate-800" : "text-slate-400"}>
+          {value || "Select a space type"}
+        </span>
+
+        <svg
+          className={`h-5 w-5 shrink-0 text-slate-500 transition-transform ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          aria-hidden="true"
+        >
+          <path
+            d="m6 9 6 6 6-6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+
+      {isOpen && !disabled && (
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+          {/* Search */}
+          <div className="border-b border-slate-100 p-2">
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  setIsOpen(false);
+                  setSearch("");
+                }
+              }}
+              placeholder="Search space types..."
+              autoFocus
+              aria-label="Search space types"
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+
+          {/* Fixed-height scrollable list */}
+          <div
+            role="listbox"
+            aria-label="Space types"
+            className="max-h-48 overflow-y-auto overscroll-contain p-1"
+          >
+            {filteredTypes.length > 0 ? (
+              filteredTypes.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  role="option"
+                  aria-selected={value === type}
+                  onClick={() => selectType(type)}
+                  className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                    value === type
+                      ? "bg-blue-50 font-semibold text-blue-700"
+                      : "text-slate-700 hover:bg-slate-100"
+                  }`}
+                >
+                  <span>{type}</span>
+
+                  {value === type && (
+                    <span className="float-right text-blue-600">✓</span>
+                  )}
+                </button>
+              ))
+            ) : (
+              <p className="px-3 py-4 text-center text-sm text-slate-500">
+                No space types found.
+              </p>
+            )}
+          </div>
+
+          <div className="border-t border-slate-100 bg-slate-50 px-3 py-2 text-xs text-slate-500">
+            {filteredTypes.length} space types available
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function AddSpace() {
   const navigate = useNavigate();
@@ -17,10 +176,10 @@ function AddSpace() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
+    setForm((previous) => ({
+      ...previous,
       [e.target.name]: e.target.value,
-    });
+    }));
 
     setError("");
     setSuccess("");
@@ -102,6 +261,7 @@ function AddSpace() {
       {/* Navbar */}
       <nav className="sticky top-0 z-20 flex min-h-[64px] w-full items-center justify-between border-b border-slate-800 bg-slate-900 px-5 py-3 text-white shadow-sm md:px-8">
         <button
+          type="button"
           onClick={() => navigate("/manager")}
           className="shrink-0 text-xl font-bold tracking-tight transition hover:text-blue-200"
         >
@@ -110,6 +270,7 @@ function AddSpace() {
 
         <div className="flex items-center gap-1 sm:gap-2">
           <button
+            type="button"
             onClick={() => navigate("/manager")}
             className={`${navLink} text-slate-300 hover:bg-slate-800 hover:text-white`}
           >
@@ -138,20 +299,8 @@ function AddSpace() {
         </div>
 
         {/* Form Card */}
-        <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-200 px-5 py-5 sm:px-8">
-            <h2 className="text-lg font-bold text-slate-900">
-              Space Details
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Fields marked with <span className="text-red-500">*</span> are
-              required.
-            </p>
-          </div>
-
+        <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-6 p-5 sm:p-8">
-            {/* Error Message */}
             {error && (
               <div
                 role="alert"
@@ -161,7 +310,6 @@ function AddSpace() {
               </div>
             )}
 
-            {/* Success Message */}
             {success && (
               <div
                 role="status"
@@ -203,23 +351,12 @@ function AddSpace() {
                 Space Type <span className="text-red-500">*</span>
               </label>
 
-              <select
-                id="space-type"
-                name="type"
+              <SpaceTypeDropdown
                 value={form.type}
                 onChange={handleChange}
-                required
                 disabled={loading || Boolean(success)}
-                className={inputClass}
-              >
-                <option value="">Select a space type</option>
-                <option value="Classroom">Classroom</option>
-                <option value="Laboratory">Laboratory</option>
-                <option value="Seminar Hall">Seminar Hall</option>
-                <option value="Conference Room">Conference Room</option>
-                <option value="Meeting Room">Meeting Room</option>
-                <option value="Auditorium">Auditorium</option>
-              </select>
+                inputClass={inputClass}
+              />
             </div>
 
             {/* Capacity and Location */}
